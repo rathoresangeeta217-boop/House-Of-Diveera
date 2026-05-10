@@ -1,0 +1,68 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A jewelry or accessory product",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "category": { "type": "string" },
+        "image": { "type": "string" },
+        "isBestSeller": { "type": "boolean" },
+        "tag": { "type": "string" },
+        "rating": { "type": "number" },
+        "reviews": { "type": "number" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "price", "category", "image"]
+    },
+    "Banner": {
+      "title": "Banner",
+      "description": "Hero section banner",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "imageUrl"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "A customer review for a product",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "productId": { "type": "string" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string" },
+        "name": { "type": "string" },
+        "verified": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productId", "rating", "comment", "name"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Collection of store products"
+    },
+    "/banners/{bannerId}": {
+      "schema": "Banner",
+      "description": "Collection of hero banners"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "Collection of product reviews"
+    }
+  }
+}

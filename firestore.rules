@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == 'rathoresangeeta217@gmail.com';
+    }
+
+    // Products
+    match /products/{productId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAdmin(); 
+    }
+
+    // Banners
+    match /banners/{bannerId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAdmin(); 
+    }
+
+    // Orders
+    match /orders/{orderId} {
+      allow create, read: if true; 
+      allow update, delete: if isAdmin();
+    }
+
+    // Reviews
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isValidReview(request.resource.data);
+      allow update, delete: if isAdmin();
+    }
+
+    function isValidReview(data) {
+      return data.productId is string &&
+             data.rating is number &&
+             data.rating >= 1 && data.rating <= 5 &&
+             data.comment is string && data.comment.size() <= 1000 &&
+             data.name is string && data.name.size() <= 100;
+    }
+  }
+}
