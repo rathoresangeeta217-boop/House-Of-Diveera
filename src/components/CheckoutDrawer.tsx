@@ -29,7 +29,7 @@ export default function CheckoutDrawer({
   itemCount,
   items = [],
 }: CheckoutDrawerProps) {
-  const [step, setStep] = useState<'login' | 'address'>('login');
+  const [step, setStep] = useState<'login' | 'address' | 'payment'>('login');
   const [mobileNumber, setMobileNumber] = useState("");
   const [updatesDefault, setUpdatesDefault] = useState(true);
   
@@ -52,9 +52,11 @@ export default function CheckoutDrawer({
         alert("Please fill all required fields.");
         return;
       }
+      setStep('payment');
+    } else if (step === 'payment') {
       setIsSubmitting(true);
       try {
-        const { db, handleFirestoreError, OperationType } = await import("../lib/firebase");
+        const { db } = await import("../lib/firebase");
         const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
         
         await addDoc(collection(db, "orders"), {
@@ -88,7 +90,9 @@ export default function CheckoutDrawer({
   };
 
   const handleBack = () => {
-    if (step === 'address') {
+    if (step === 'payment') {
+      setStep('address');
+    } else if (step === 'address') {
       setStep('login');
     } else {
       onBack();
@@ -289,6 +293,38 @@ export default function CheckoutDrawer({
                 </div>
               )}
 
+              {step === 'payment' && (
+                <div className="flex flex-col gap-6 items-center flex-1 justify-center py-6">
+                  <div className="bg-white border border-gray-200 p-8 rounded-2xl shadow-sm flex flex-col items-center w-full max-w-sm">
+                    <h3 className="text-xl font-bold text-gray-900 mb-6">Scan to Pay via UPI</h3>
+
+                    {/* QR Code Container */}
+                    <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-inner w-56 h-56 flex items-center justify-center mb-4 relative">
+                      <img 
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`upi://pay?pa=6377370687@ibl&pn=Mrs DIMPLE JANGID&am=${total}&cu=INR`)}`} 
+                        alt="UPI QR Code" 
+                        className="w-full h-full"
+                      />
+                    </div>
+
+                    <div className="flex flex-col items-center mb-8 border-b border-gray-100 pb-6 w-full">
+                      <p className="text-gray-500 text-sm font-medium mb-3">Pay By</p>
+                      <div className="flex gap-4 items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" className="h-6 object-contain grayscale hover:grayscale-0 transition-all opacity-80 hover:opacity-100" alt="PhonePe" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" className="h-5 object-contain grayscale hover:grayscale-0 transition-all opacity-80 hover:opacity-100" alt="Google Pay" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" className="h-5 object-contain grayscale hover:grayscale-0 transition-all opacity-80 hover:opacity-100" alt="Paytm" />
+                      </div>
+                    </div>
+
+                    <p className="text-gray-600 font-medium mb-1">Paying to</p>
+                    <p className="text-gray-900 font-bold tracking-wide mb-4">Mrs DIMPLE JANGID</p>
+                    <p className="text-3xl font-bold text-gray-900 mb-2">₹{total.toLocaleString("en-IN")}</p>
+                  </div>
+                </div>
+              )}
+
               <div className="h-10" /> {/* Spacer */}
             </div>
 
@@ -321,7 +357,7 @@ export default function CheckoutDrawer({
                     : "bg-[#989898] text-white cursor-not-allowed"
                 }`}
               >
-                Continue
+                {step === 'payment' ? (isSubmitting ? 'Processing...' : 'Confirm Payment') : 'Continue'}
               </button>
 
               {step === 'login' && (
