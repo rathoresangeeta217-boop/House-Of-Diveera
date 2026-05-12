@@ -309,13 +309,22 @@ export default function CheckoutDrawer({
 
                     <div className="flex flex-col items-center mb-8 border-b border-gray-100 pb-6 w-full">
                       <p className="text-gray-500 text-sm font-medium mb-3">Pay By</p>
-                      <div className="flex gap-4 items-center">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" className="h-6 object-contain grayscale hover:grayscale-0 transition-all opacity-80 hover:opacity-100" alt="PhonePe" />
+                      <a 
+                        href={`upi://pay?pa=6377370687@ibl&pn=Mrs%20DIMPLE%20JANGID&am=${total}&cu=INR`}
+                        className="flex gap-4 items-center mb-4 transition-transform hover:scale-105 active:scale-95"
+                      >
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" className="h-6 object-contain" alt="PhonePe" />
                         <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" className="h-5 object-contain grayscale hover:grayscale-0 transition-all opacity-80 hover:opacity-100" alt="Google Pay" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" className="h-5 object-contain" alt="Google Pay" />
                         <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" className="h-5 object-contain grayscale hover:grayscale-0 transition-all opacity-80 hover:opacity-100" alt="Paytm" />
-                      </div>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" className="h-5 object-contain" alt="Paytm" />
+                      </a>
+                      <a 
+                        href={`upi://pay?pa=6377370687@ibl&pn=Mrs%20DIMPLE%20JANGID&am=${total}&cu=INR`}
+                        className="md:hidden bg-black text-white px-6 py-2.5 rounded-xl font-medium w-full text-center hover:bg-gray-800 transition-colors shadow-lg active:scale-95"
+                      >
+                        Open UPI App
+                      </a>
                     </div>
 
                     <p className="text-gray-600 font-medium mb-1">Paying to</p>
