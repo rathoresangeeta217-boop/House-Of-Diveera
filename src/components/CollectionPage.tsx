@@ -126,15 +126,16 @@ export default function CollectionPage() {
               <div className="w-8 h-8 border-4 border-diveera-green border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
               {sortedProducts.map((product, idx) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
+                  className="flex"
                 >
-                  <ProductCard product={product} compact={true} />
+                  <ProductCard product={product} />
                 </motion.div>
               ))}
             </div>
