@@ -43,21 +43,21 @@ const testimonials: Testimonial[] = [
 
 export default function Testimonials() {
   return (
-    <section className="bg-[#632a31] py-24 px-6 relative overflow-hidden" id="testimonials">
+    <section className="bg-[#632a31] py-8 md:py-12 px-6 relative overflow-hidden" id="testimonials">
       <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="flex flex-col items-center text-center mb-16">
-          <Quote className="text-[#a87a7d] w-12 h-12 mb-8 opacity-40" />
-          <h2 className="text-4xl md:text-6xl font-serif italic text-white mb-4">
+        <div className="flex flex-col items-center text-center mb-6 md:mb-8">
+          <Quote className="text-[#a87a7d] w-6 h-6 mb-2 opacity-40" />
+          <h2 className="text-2xl md:text-4xl font-serif italic text-white mb-1.5">
             What Our Customers Say
           </h2>
-          <p className="text-[#a87a7d] font-sans font-black text-[10px] md:text-xs uppercase tracking-[0.3em]">
+          <p className="text-[#a87a7d] font-sans font-black text-[9px] md:text-[10px] uppercase tracking-[0.3em]">
             VERIFIED REVIEWS FROM GOOGLE & OUR CUSTOMERS
           </p>
         </div>
 
-        <div className="relative overflow-hidden py-4 -mx-6 px-6">
+        <div className="relative overflow-hidden py-1 -mx-6 px-6">
           <motion.div 
-            className="flex gap-6"
+            className="flex gap-4"
             animate={{
               x: [0, -1456], // Move by the total width of one set of items (approx)
             }}
@@ -74,18 +74,20 @@ export default function Testimonials() {
             {[...testimonials, ...testimonials].map((item, index) => (
               <div
                 key={`${item.id}-${index}`}
-                className="flex-shrink-0 w-[340px] bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 flex flex-col h-full hover:bg-white/10 transition-colors group"
+                className="flex-shrink-0 w-[300px] bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 md:p-5 flex flex-col justify-between hover:bg-white/10 transition-colors group"
               >
-                <div className="flex gap-1 mb-6">
-                  {[...Array(item.rating)].map((_, i) => (
-                    <Star key={i} size={14} className="fill-[#eab308] text-[#eab308]" />
-                  ))}
+                <div>
+                  <div className="flex gap-1 mb-2">
+                    {[...Array(item.rating)].map((_, i) => (
+                      <Star key={i} size={12} className="fill-[#eab308] text-[#eab308]" />
+                    ))}
+                  </div>
+                  <p className="text-white/90 font-sans text-xs md:text-sm leading-relaxed mb-4">
+                    "{item.text}"
+                  </p>
                 </div>
-                <p className="text-white/90 font-sans text-sm leading-relaxed mb-10 flex-grow">
-                  "{item.text}"
-                </p>
-                <div className="pt-6 border-t border-white/10">
-                  <h4 className="text-white font-sans font-bold text-sm tracking-wide">
+                <div className="pt-3 border-t border-white/10">
+                  <h4 className="text-white font-sans font-bold text-xs tracking-wide">
                     {item.name}
                   </h4>
                 </div>
@@ -98,13 +100,13 @@ export default function Testimonials() {
           <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#632a31] to-transparent z-10 pointer-events-none" />
         </div>
 
-        <div className="mt-16 flex flex-col items-center gap-6">
-          <button className="border border-[#a87a7d] text-[#e8d5d6] px-10 py-4 rounded-full font-sans font-black text-[11px] uppercase tracking-[0.2em] hover:bg-white/5 transition-all flex items-center gap-3">
+        <div className="mt-6 md:mt-8 flex flex-col items-center gap-3">
+          <button className="border border-[#a87a7d] text-[#e8d5d6] px-6 py-2.5 rounded-full font-sans font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] hover:bg-white/5 transition-all flex items-center gap-2">
             READ ALL REVIEWS ON GOOGLE
-            <ArrowUpRight size={16} />
+            <ArrowUpRight size={13} />
           </button>
           
-          <div className="flex items-center gap-4 text-[#a87a7d] font-sans text-[10px] font-medium tracking-wider uppercase">
+          <div className="flex items-center gap-3 text-[#a87a7d] font-sans text-[8px] md:text-[9px] font-medium tracking-wider uppercase">
             <span>2 decades of trust</span>
             <span className="w-1 h-1 rounded-full bg-white/20"></span>
             <span>BIS Hallmarked</span>

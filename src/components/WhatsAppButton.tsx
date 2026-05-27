@@ -25,7 +25,7 @@ export default function WhatsAppButton() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleClick}
-          className="fixed bottom-8 right-8 z-40 flex items-center gap-3 bg-[#25D366] text-white px-5 py-3 rounded-full shadow-[0_10px_25px_rgba(37,211,102,0.3)] group transition-all duration-300"
+          className="fixed bottom-24 md:bottom-8 right-4 md:right-8 z-40 flex items-center gap-2.5 md:gap-3 bg-[#25D366] text-white px-4 md:px-5 py-2.5 md:py-3 rounded-full shadow-[0_10px_25px_rgba(37,211,102,0.3)] group transition-all duration-300"
           id="whatsapp-order-button"
         >
           <div className="relative">

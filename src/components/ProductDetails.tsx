@@ -171,7 +171,7 @@ export default function ProductDetails() {
       <AnnouncementBar />
       <Navbar />
 
-      <main className="pt-[100px] pb-20">
+      <main className="pt-[100px] pb-28 md:pb-20">
         <div className="container mx-auto px-4 md:px-6">
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-2 text-[9px] md:text-xs text-diveera-grey mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
@@ -702,13 +702,13 @@ export default function ProductDetails() {
       <WhatsAppButton />
 
       {/* Sticky Bottom Actions (Mobile) */}
-      <div className="lg:hidden fixed bottom-16 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t z-50 flex gap-3">
-        <button className="flex-1 bg-diveera-dark text-white py-3 rounded-xl font-black uppercase text-xs flex items-center justify-center gap-2">
-          <ShoppingCart size={16} />
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 pb-6 pt-3 bg-white/95 backdrop-blur-md border-t border-gray-100 z-50 flex gap-3 shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
+        <button className="flex-1 bg-white border-2 border-diveera-dark text-diveera-dark py-3.5 rounded-xl font-black uppercase text-[11px] tracking-wider flex items-center justify-center gap-2 transition-colors active:bg-gray-100">
+          <ShoppingCart size={15} />
           Add To Cart
         </button>
-        <button className="flex-1 bg-diveera-green text-white py-3 rounded-xl font-black uppercase text-xs flex items-center justify-center gap-2">
-          <Zap size={16} fill="currentColor" />
+        <button className="flex-1 bg-diveera-green text-white py-3.5 rounded-xl font-black uppercase text-[11px] tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-diveera-green/20 transition-colors active:scale-98">
+          <Zap size={15} fill="currentColor" />
           Buy Now
         </button>
       </div>

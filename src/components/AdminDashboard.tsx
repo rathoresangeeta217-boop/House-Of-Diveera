@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
-import { Plus, Trash2, Edit2, LogOut, Image as ImageIcon, Layout, Tag, DollarSign, List, X, Upload } from 'lucide-react';
+import { Plus, Trash2, Edit2, LogOut, Image as ImageIcon, Layout, Tag, DollarSign, List, X, Upload, Copy, Check, CheckCircle2, MapPin, Calendar, User, Phone, ShoppingBag, Eye, RefreshCw, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function AdminDashboard() {
@@ -19,6 +19,34 @@ export default function AdminDashboard() {
   // Form states
   const [formData, setFormData] = useState<any>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopyId = (id: string) => {
+    navigator.clipboard.writeText(id);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleUpdateOrderStatus = async (id: string, newStatus: string) => {
+    try {
+      await updateDoc(doc(db, 'orders', id), { status: newStatus });
+      fetchData();
+    } catch (err) {
+      handleFirestoreError(err, OperationType.UPDATE, `orders/${id}`);
+    }
+  };
+
+  const formatOrderDate = (createdAt: any) => {
+    if (!createdAt) return "Just now";
+    const date = createdAt.toDate ? createdAt.toDate() : new Date(createdAt);
+    return date.toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   useEffect(() => {
     fetchData();
@@ -273,41 +301,244 @@ export default function AdminDashboard() {
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-diveera-green border-t-transparent"></div>
           </div>
         ) : activeTab === 'orders' ? (
-          <div className="flex flex-col gap-4">
-            {items.map((order) => (
-              <div key={order.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row gap-6 relative group">
-                 <div>
-                   <h3 className="font-bold text-lg mb-1">Order #{order.id.slice(-6).toUpperCase()}</h3>
-                   <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded">
-                     {order.status}
-                   </span>
-                 </div>
-                 <div className="flex-1">
-                   <p className="text-sm font-medium">{order.address?.fullName} ({order.mobileNumber})</p>
-                   <p className="text-sm text-gray-500 mt-1">{order.address?.flat}, {order.address?.area}, {order.address?.city}, {order.address?.state} - {order.address?.pincode}</p>
-                   <div className="mt-3 flex gap-2 overflow-auto">
-                     {order.items?.map((item: any, i: number) => (
-                       <div key={i} className="flex gap-2 bg-gray-50 p-2 rounded items-center shrink-0">
-                         <img src={item.image} className="w-8 h-8 object-cover rounded" />
-                         <div className="text-xs">
-                           <p className="font-bold truncate max-w-[120px]">{item.name || item.title}</p>
-                           <p>Qty: {item.quantity}</p>
-                         </div>
-                       </div>
-                     ))}
-                   </div>
-                 </div>
-                 <div className="text-right">
-                   <p className="text-xl font-bold">₹{order.total?.toLocaleString('en-IN')}</p>
-                   <p className="text-sm text-gray-500">{order.items?.length || 0} items</p>
-                 </div>
-                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <button onClick={() => handleDelete(order.id)} className="bg-red-50 p-2 rounded-full text-red-500 hover:bg-red-100 transition-colors">
-                     <Trash2 size={16} />
-                   </button>
-                 </div>
-              </div>
-            ))}
+          <div className="flex flex-col gap-6">
+            {items.map((order) => {
+              const customerInitial = order.address?.fullName?.charAt(0).toUpperCase() || 'C';
+              return (
+                <div 
+                  key={order.id} 
+                  className="bg-white rounded-2xl shadow-sm border border-neutral-200/80 overflow-hidden hover:shadow-md transition-all duration-200 group"
+                >
+                  {/* Shopify Top Header Bar */}
+                  <div className="bg-neutral-50 px-6 py-4 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono text-xs text-neutral-400 font-bold">ORDER</span>
+                        <h3 className="font-mono font-black text-neutral-950 tracking-wider">
+                          #{order.id.slice(-6).toUpperCase()}
+                        </h3>
+                        <button 
+                          onClick={() => handleCopyId(order.id)} 
+                          className="text-neutral-400 hover:text-neutral-600 transition-colors p-1"
+                          title="Copy Full Document ID"
+                        >
+                          {copiedId === order.id ? (
+                            <Check size={13} className="text-emerald-500" />
+                          ) : (
+                            <Copy size={13} />
+                          )}
+                        </button>
+                      </div>
+                      
+                      <span className="h-4 w-[1px] bg-neutral-200 hidden sm:block"></span>
+                      
+                      <div className="flex items-center gap-1.5 text-xs text-neutral-500">
+                        <Calendar size={13} className="text-neutral-400" />
+                        <span>{formatOrderDate(order.createdAt)}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      {/* Detailed Badging */}
+                      {order.status === 'completed' || order.status === 'delivered' ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase tracking-widest">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                          Fulfilled
+                        </span>
+                      ) : order.status === 'cancelled' ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-neutral-100 text-neutral-600 border border-neutral-200 uppercase tracking-widest">
+                          <span className="w-1.5 h-1.5 rounded-full bg-neutral-400"></span>
+                          Cancelled
+                        </span>
+                      ) : order.status === 'processing' ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-100 uppercase tracking-widest">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                          Processing
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200/60 uppercase tracking-widest">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                          Unfulfilled
+                        </span>
+                      )}
+
+                      {/* Shopify-style Fulfillment Select Action */}
+                      <select 
+                        value={order.status || 'pending'} 
+                        onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                        className="text-xs bg-white border border-neutral-200 hover:border-neutral-300 font-bold text-neutral-700 px-2.5 py-1.5 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-diveera-dark transition-all cursor-pointer"
+                      >
+                        <option value="pending">Mark Pending</option>
+                        <option value="processing">Mark Processing</option>
+                        <option value="completed">Mark Completed</option>
+                        <option value="cancelled">Mark Cancelled</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Shopify Grid Content */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
+                    {/* Col 1: Products */}
+                    <div className="lg:col-span-6 lg:border-r lg:border-neutral-100 lg:pr-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
+                          <ShoppingBag size={11} />
+                          ITEMS PURCHASED
+                        </span>
+                        <span className="text-[10px] font-bold uppercase text-neutral-400 bg-neutral-100 px-1.5 py-0.5 rounded">
+                          {order.items?.length || 0} Line {order.items?.length === 1 ? 'item' : 'items'}
+                        </span>
+                      </div>
+
+                      <div className="space-y-3.5 max-h-[220px] overflow-y-auto no-scrollbar pr-1">
+                        {order.items?.map((item: any, i: number) => {
+                          const itemImage = item.image || item.imageUrl || item.thumbnail || 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=200&h=200&auto=format&fit=crop';
+                          return (
+                            <div key={i} className="flex gap-3 bg-neutral-50/50 p-2.5 rounded-xl border border-neutral-100 items-center justify-between hover:bg-neutral-50 transition-colors">
+                              <div className="flex gap-3 items-center min-w-0">
+                                <div className="relative w-12 h-12 bg-white rounded-lg border border-neutral-200/80 overflow-hidden shrink-0 flex items-center justify-center">
+                                  <img 
+                                    src={itemImage} 
+                                    alt={item.name || item.title} 
+                                    className="w-full h-full object-cover" 
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.src = 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=200&h=200&auto=format&fit=crop';
+                                    }}
+                                  />
+                                </div>
+                                <div className="text-xs min-w-0">
+                                  <p className="font-black text-neutral-800 truncate max-w-[240px] leading-snug">
+                                    {item.name || item.title}
+                                  </p>
+                                  <p className="text-[10px] text-neutral-400 font-mono mt-0.5">
+                                    Price: ₹{(item.price || (order.total / item.quantity)).toLocaleString('en-IN')}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <span className="font-mono font-black text-xs text-neutral-900 bg-neutral-100/80 border border-neutral-200 px-2 py-0.5 rounded-md">
+                                  x{item.quantity}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Col 2: Customer Details */}
+                    <div className="lg:col-span-3 lg:border-r lg:border-neutral-100 lg:pr-6 flex flex-col justify-between">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5 mb-3">
+                          <User size={11} />
+                          CUSTOMER & DELIVERY
+                        </span>
+
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-full bg-diveera-dark text-white font-sans font-black flex items-center justify-center text-xs shrink-0 select-none">
+                              {customerInitial}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-neutral-900 truncate">
+                                {order.address?.fullName}
+                              </p>
+                              {order.address?.email && (
+                                <p className="text-[10px] text-neutral-400 truncate mt-0.5 flex items-center gap-1">
+                                  <span>{order.address.email}</span>
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="pt-2.5 border-t border-neutral-100 space-y-1.5 text-xs text-neutral-600">
+                            {order.mobileNumber && (
+                              <p className="flex items-center gap-1.5 font-bold text-neutral-800">
+                                <Phone size={11} className="text-neutral-400" />
+                                <span>+91 {order.mobileNumber}</span>
+                              </p>
+                            )}
+
+                            <div className="flex items-start gap-1.5 leading-relaxed text-neutral-500 text-[11px] mt-1 pl-0.5">
+                              <MapPin size={11} className="text-neutral-400 mt-0.5 shrink-0" />
+                              <div>
+                                <p className="font-medium text-neutral-800">{order.address?.flat}, {order.address?.area}</p>
+                                <p>{order.address?.city}, {order.address?.state}</p>
+                                <div className="mt-1 flex items-center gap-1.5">
+                                  <span className="bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold">
+                                    {order.address?.pincode}
+                                  </span>
+                                  {order.address?.addressType && (
+                                    <span className="bg-neutral-100/50 text-neutral-500 border border-neutral-200/55 px-1.5 py-0.5 rounded text-[8px] font-sans font-bold uppercase tracking-wider">
+                                      {order.address?.addressType}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Col 3: Pricing Summary */}
+                    <div className="lg:col-span-3 flex flex-col justify-between">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5 mb-3">
+                          <DollarSign size={11} />
+                          PAYMENT & BILLING
+                        </span>
+
+                        <div className="space-y-1.5 text-xs">
+                          {order.originalTotal && order.originalTotal !== order.total && (
+                            <div className="flex justify-between text-neutral-400">
+                              <span>Cart Subtotal</span>
+                              <span className="line-through font-mono">₹{order.originalTotal.toLocaleString('en-IN')}</span>
+                            </div>
+                          )}
+
+                          {order.discount && order.discount > 0 && (
+                            <div className="flex justify-between text-emerald-600 font-bold">
+                              <span>Discount Applied</span>
+                              <span className="font-mono">-₹{order.discount.toLocaleString('en-IN')}</span>
+                            </div>
+                          )}
+
+                          <div className="pt-2 border-t border-neutral-100 flex justify-between items-baseline">
+                            <span className="font-bold text-neutral-500">GRAND TOTAL</span>
+                            <div className="text-right">
+                              <span className="text-lg font-black text-neutral-900 font-mono">
+                                ₹{order.total?.toLocaleString('en-IN') || '0'}
+                              </span>
+                              <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider mt-0.5">
+                                Paid via COD
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
+                        <span className="text-[10px] font-bold text-neutral-400">
+                          ID: {order.id.slice(0, 8)}...
+                        </span>
+                        
+                        <button 
+                          onClick={() => handleDelete(order.id)} 
+                          className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-colors px-2.5 py-1.5 rounded-lg text-xs font-bold"
+                          title="Delete Order Record"
+                        >
+                          <Trash2 size={12} />
+                          <span>Delete Order</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

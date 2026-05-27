@@ -91,12 +91,10 @@ export default function ProductCard({ product, compact = false, layout = 'vertic
                  )}
                </div>
                
-               {/* Color swatches */}
-               <div className="flex -space-x-1 items-center shrink-0">
-                  <div className="rounded-full bg-black border border-gray-200 w-3 h-3 md:w-3.5 md:h-3.5" />
-                  <div className="rounded-full bg-blue-900 border border-gray-200 w-3 h-3 md:w-3.5 md:h-3.5" />
-                  <span className="text-[8px] md:text-[10px] text-gray-500 ml-1.5 font-medium">+{Math.floor(Math.random() * 3) + 1}</span>
-               </div>
+               {/* Category Text instead of Color Swatches */}
+               <span className="text-[10px] md:text-xs text-gray-500 font-medium tracking-wide uppercase shrink-0">
+                  {product.category || 'Jewelry'}
+               </span>
             </div>
 
             {/* Features tags */}
@@ -180,20 +178,20 @@ export default function ProductCard({ product, compact = false, layout = 'vertic
       </div>
 
       {/* Content */}
-      <div className={cn("flex flex-col flex-grow bg-white text-left", compact ? "p-3" : "p-4")}>
+      <div className={cn("flex flex-col flex-grow bg-white text-left", compact ? "p-2.5" : "p-3.5")}>
         
         {/* Rating row */}
-        <div className="flex items-center gap-1 mb-2">
-          <Star size={14} fill="#fecb01" className="text-[#fecb01]" />
-          <span className="font-bold text-sm text-black">{product.rating}</span>
-          <span className="text-gray-300 px-0.5">|</span>
-          <span className="text-sm text-black font-medium">{product.reviews || Math.floor(Math.random() * 500) + 10}</span>
-          <CheckCircle2 size={16} fill="#00c68c" className="text-white" />
+        <div className="flex items-center gap-1 mb-1.5">
+          <Star size={13} fill="#fecb01" className="text-[#fecb01]" />
+          <span className="font-bold text-[13px] text-black">{product.rating}</span>
+          <span className="text-gray-300 px-0.5 text-xs">|</span>
+          <span className="text-[13px] text-black font-medium">{product.reviews || Math.floor(Math.random() * 500) + 10}</span>
+          <CheckCircle2 size={14} fill="#00c68c" className="text-white" />
         </div>
 
         {/* Title */}
-        <Link to={`/products/${product.id}`} className="mb-4 block">
-          <h3 className={cn("font-bold text-black hover:text-[#ff0000] transition-colors line-clamp-1", compact ? "text-base" : "text-[17px]")}>
+        <Link to={`/products/${product.id}`} className="mb-2 block">
+          <h3 className={cn("font-bold text-black hover:text-[#ff0000] transition-colors line-clamp-1", compact ? "text-sm md:text-base" : "text-base md:text-[17px]")}>
             {product.name}
           </h3>
         </Link>
@@ -201,36 +199,34 @@ export default function ProductCard({ product, compact = false, layout = 'vertic
         {/* Price row with swatches */}
         <div className="flex items-center justify-between w-full">
           <div className="flex items-baseline gap-1.5 flex-wrap">
-            <span className={cn("text-black font-black", compact ? "text-lg" : "text-xl")}>
+            <span className={cn("text-black font-black", compact ? "text-base md:text-lg" : "text-lg md:text-xl")}>
               ₹{(Number(product.price) || 0).toLocaleString()}
             </span>
             {product.originalPrice && (
-              <span className="text-gray-400 line-through text-sm font-medium">
+              <span className="text-gray-400 line-through text-xs md:text-sm font-medium">
                 ₹{(Number(product.originalPrice) || 0).toLocaleString()}
               </span>
             )}
             {product.originalPrice && product.originalPrice > product.price && (
-              <span className="text-[#00c68c] font-bold text-sm">
+              <span className="text-[#00c68c] font-bold text-xs md:text-sm">
                 {Math.round(((Number(product.originalPrice) - Number(product.price)) / Number(product.originalPrice)) * 100)}% off
               </span>
             )}
           </div>
           
-          {/* Swatches */}
-          <div className="flex -space-x-1 items-center shrink-0">
-            <div className="rounded-full bg-[#fecb01] border border-gray-200 w-3 h-3 md:w-3.5 md:h-3.5" />
-            <div className="rounded-full bg-black border border-gray-200 w-3 h-3 md:w-3.5 md:h-3.5" />
-            <span className="text-[10px] text-gray-500 ml-1.5 font-medium">+1</span>
-          </div>
+          {/* Category Text instead of Color Swatches */}
+          <span className="text-[11px] md:text-xs text-gray-500 font-medium tracking-wide uppercase shrink-0">
+            {product.category || 'Jewelry'}
+          </span>
         </div>
 
         {/* Dashed line separator */}
-        <div className="border-t border-gray-200 border-dashed w-full my-3.5" />
+        <div className="border-t border-gray-200 border-dashed w-full my-2" />
 
         {/* Features tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-1.5 mb-2.5">
           {((product as any).features?.slice(0,2) || ['Hi-Res Audio with LDAC', 'boAt Spatial Audio']).map((feat: string, i: number) => (
-            <span key={i} className="bg-[#f0f2f5] text-gray-700 text-[10px] md:text-[11px] font-medium px-2 py-1 rounded-full whitespace-nowrap">
+            <span key={i} className="bg-[#f0f2f5] text-gray-700 text-[9px] md:text-[10px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap">
               {feat}
             </span>
           ))}
@@ -238,7 +234,7 @@ export default function ProductCard({ product, compact = false, layout = 'vertic
 
         {/* Add to Cart */}
         <div className="mt-auto">
-          <button className="w-full bg-[#1a1a1a] hover:bg-black text-white rounded-[10px] font-bold py-2.5 md:py-3 transition-colors text-[13px] md:text-[15px] active:scale-95">
+          <button className="w-full bg-[#1a1a1a] hover:bg-black text-white rounded-[8px] font-bold py-2 md:py-2.5 transition-colors text-[12px] md:text-[14px] active:scale-95">
             Add To Cart
           </button>
         </div>

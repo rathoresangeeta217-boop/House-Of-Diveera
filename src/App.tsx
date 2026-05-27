@@ -9,6 +9,7 @@ import BigDeals from './components/BigDeals';
 import ShopByLifestyle from './components/ShopByLifestyle';
 import ProductGrid from './components/ProductGrid';
 import Testimonials from './components/Testimonials';
+import VideoShowcase from './components/VideoShowcase';
 import FullWidthBanner from './components/FullWidthBanner';
 import SecondaryBanner from './components/SecondaryBanner';
 import Footer from './components/Footer';
@@ -36,6 +37,7 @@ function HomePage() {
       <ShopByLifestyle />
       <ProductGrid />
       <Testimonials />
+      <VideoShowcase />
       <SecondaryBanner />
       <Footer />
       <WhatsAppButton />
